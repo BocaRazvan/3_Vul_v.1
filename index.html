@@ -211,6 +211,9 @@ integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJ
         <tr>
           <th scope="col" colspan="2" class="text-center">ORAR</th>
         </tr>
+        <tr>
+          <th scope="col" colspan="2" class="text-center" id="status-cell">Inchis</th>
+        </tr>
       </thead>
       <tbody>
         <tr>
@@ -602,6 +605,47 @@ async function loadMessages() {
 
 // Call the function immediately when page loads
 loadMessages();
+</script>
+
+<!--INCHIS / DESCHIS-->
+<script>
+  function updateStatus() {
+    const now = new Date();
+    const day = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
+    const hour = now.getHours();
+    const minutes = now.getMinutes();
+    
+    // Convert current time to total minutes for easier comparison
+    const currentTime = hour * 60 + minutes;
+    
+    let isOpen = false;
+
+    // Weekdays (Mon-Fri: 1-5) 8:00 (480 min) to 18:00 (1080 min)
+    if (day >= 1 && day <= 5) {
+      if (currentTime >= 480 && currentTime < 1080) {
+        isOpen = true;
+      }
+    } 
+    // Saturday (6) 9:00 (540 min) to 13:00 (780 min)
+    else if (day === 6) {
+      if (currentTime >= 540 && currentTime < 780) {
+        isOpen = true;
+      }
+    }
+
+    const statusCell = document.getElementById('status-cell');
+
+    if (isOpen) {
+      statusCell.textContent = "Este deschis - va asteptam cu drag!";
+      statusCell.style.color = "green";
+    } else {
+      statusCell.textContent = "Este inchis - va asteptam cu drag in timpul programului!";
+      statusCell.style.color = "red";
+    }
+  }
+
+  // Run the function immediately when the page loads
+  updateStatus();
 </script>
 
 </body>
