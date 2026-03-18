@@ -609,43 +609,42 @@ loadMessages();
 
 <!--INCHIS / DESCHIS-->
 <script>
-  function updateStatus() {
-    const now = new Date();
-    const day = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
-    const hour = now.getHours();
-    const minutes = now.getMinutes();
-    
-    // Convert current time to total minutes for easier comparison
-    const currentTime = hour * 60 + minutes;
-    
-    let isOpen = false;
+function updateStatus() {
+  // To fix the timezone issue, you could use:
+  // const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Bucharest"}));
+  
+  const now = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Bucharest"}));
+  const day = now.getDay(); 
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+  
+  let isOpen = false;
 
-    // Weekdays (Mon-Fri: 1-5) 8:00 (480 min) to 18:00 (1080 min)
-    if (day >= 1 && day <= 5) {
-      if (currentTime >= 480 && currentTime < 1080) {
-        isOpen = true;
-      }
-    } 
-    // Saturday (6) 9:00 (540 min) to 13:00 (780 min)
-    else if (day === 6) {
-      if (currentTime >= 540 && currentTime < 780) {
-        isOpen = true;
-      }
-    }
-
-    const statusCell = document.getElementById('status-cell');
-
-    if (isOpen) {
-      statusCell.textContent = "Este deschis - va asteptam cu drag!";
-      statusCell.style.color = "green";
-    } else {
-      statusCell.textContent = "Este inchis - va asteptam cu drag in timpul programului!";
-      statusCell.style.color = "red";
-    }
+  // Mon-Fri: 08:00 - 18:00
+  if (day >= 1 && day <= 5) {
+    if (currentTime >= 540 && currentTime < 1080) isOpen = true;
+  } 
+  // Sat: 09:00 - 13:00
+  else if (day === 6) {
+    if (currentTime >= 540 && currentTime < 780) isOpen = true;
   }
 
-  // Run the function immediately when the page loads
-  updateStatus();
+  const statusCell = document.getElementById('status-cell');
+  if (!statusCell) return; // Safety check
+
+  if (isOpen) {
+    statusCell.textContent = "Este deschis - va asteptam cu drag!";
+    statusCell.style.color = "green";
+  } else {
+    statusCell.textContent = "Este inchis - va asteptam cu drag in timpul programului!";
+    statusCell.style.color = "red";
+  }
+}
+
+// Initialize
+updateStatus();
+
+// Update every 60 seconds so the status flips without a refresh
+setInterval(updateStatus, 60000);
 </script>
 
 </body>
